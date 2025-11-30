@@ -31,6 +31,7 @@ if (-not $proc) {
     if (-not $startPath) {
         # Common Wizard101 installation paths
         $commonPaths = @(
+            "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\KingsIsle Entertainment\Wizard101\Play Wizard101.lnk",
             "C:\ProgramData\KingsIsle Entertainment\Wizard101\Wizard101.exe",
             "C:\Program Files (x86)\KingsIsle Entertainment\Wizard101\Wizard101.exe",
             "C:\Program Files\KingsIsle Entertainment\Wizard101\Wizard101.exe"
@@ -45,19 +46,26 @@ if (-not $proc) {
     }
     
     if ($startPath) {
-        Write-Host "Found starter executable: $startPath"
-        $ans = Read-Host "Start it now? (Y/N)"
-        if ($ans -match '^[Yy]') {
-            try {
-                Start-Process -FilePath $startPath
-                Write-Host "Launched $startPath"
-            } catch {
-                Write-Host "Failed to start $startPath : $_" -ForegroundColor Red
-            }
+        # Check if Wizard101.exe is already running before launching
+        $launcherRunning = Get-Process -Name "Wizard101" -ErrorAction SilentlyContinue
+        
+        if ($launcherRunning) {
+            Write-Host "Wizard101.exe launcher is already running. Skipping launch." -ForegroundColor Yellow
         } else {
-            Write-Host "Please start the application manually now."
-            Write-Host "If you prefer, run: $startPath"
-            Read-Host "Press Enter once you have started the application to continue."
+            Write-Host "Found starter executable: $startPath"
+            $ans = Read-Host "Start it now? (Y/N)"
+            if ($ans -match '^[Yy]') {
+                try {
+                    Start-Process -FilePath $startPath
+                    Write-Host "Launched $startPath"
+                } catch {
+                    Write-Host "Failed to start $startPath : $_" -ForegroundColor Red
+                }
+            } else {
+                Write-Host "Please start the application manually now."
+                Write-Host "If you prefer, run: $startPath"
+                Read-Host "Press Enter once you have started the application to continue."
+            }
         }
     } else {
         Write-Host "Please start the application now and press Enter when it's running." -ForegroundColor Yellow
