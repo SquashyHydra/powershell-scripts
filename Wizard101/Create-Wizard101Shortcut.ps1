@@ -53,18 +53,11 @@ if (-not $proc) {
             Write-Host "Wizard101.exe launcher is already running. Skipping launch." -ForegroundColor Yellow
         } else {
             Write-Host "Found starter executable: $startPath"
-            $ans = Read-Host "Start it now? (Y/N)"
-            if ($ans -match '^[Yy]') {
-                try {
-                    Start-Process -FilePath $startPath
-                    Write-Host "Launched $startPath"
-                } catch {
-                    Write-Host "Failed to start $startPath : $_" -ForegroundColor Red
-                }
-            } else {
-                Write-Host "Please start the application manually now."
-                Write-Host "If you prefer, run: $startPath"
-                Read-Host "Press Enter once you have started the application to continue."
+            try {
+                Start-Process -FilePath $startPath
+                Write-Host "Launched $startPath"
+            } catch {
+                Write-Host "Failed to start $startPath : $_" -ForegroundColor Red
             }
         }
     } else {
